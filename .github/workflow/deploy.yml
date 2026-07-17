@@ -1,0 +1,19 @@
+name: 'deploy on ec2'
+on:
+    push:
+        branches:
+        - master
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: appleboy/ssh-action@v1
+              with:
+                host: ${{ vars.EC2_HOST }}
+                username: ubuntu
+                key: ${{ secrets.EC2_SSH_KEY }}
+                script: |
+                    cd /home/ubuntu/github_ci_cd
+                    git fetch origin
+                    git reset --hard origin/main
+                    docker compose up -d --build
